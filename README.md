@@ -25,6 +25,38 @@ Open `output/demo/charts/map.png` and `recent-map.png`. The demo generates ficti
 prices, an example proposal and the full evidence packet locally. It needs no account,
 API key or model call. Its fixture selections are for demonstrating the contracts.
 
+## Data sources
+
+`prepare` reads local CSV files. Market-data acquisition is a separate step; this
+repository does not download prices or load provider credentials.
+
+| Source | Role | Included here |
+| --- | --- | --- |
+| Synthetic demo | Fictional observations for testing the complete workflow | Generator and example proposal |
+| Massive (formerly Polygon.io) | Historical stock bars and separately captured daily OHLC | CSV ingestion only; no Massive API client or downloader |
+| Schwab | An optional source for a separately implemented data exporter | No Schwab interface, OAuth flow, token storage/refresh, streaming or trading integration |
+
+[Massive is the renamed Polygon.io](https://www.massive.com/blog/polygon-is-now-massive).
+To prepare compatible exports, use its
+[custom bars endpoint](https://massive.com/docs/rest/stocks/aggregates/custom-bars)
+for one-minute or 30-minute OHLCV, including extended hours. Convert the `t` bar-start
+timestamp from Unix milliseconds to an offset-aware ISO timestamp, and map
+`o,h,l,c,v` to `open,high,low,close,volume`. Retrieve all pages for the requested window;
+leave absent bars absent. Choose the split-adjustment setting explicitly and keep it
+consistent across intraday and daily inputs.
+
+For the optional daily CSV, obtain `open,high,low,close` separately from Massive's
+[daily ticker summary](https://massive.com/docs/rest/stocks/aggregates/daily-ticker-summary),
+using its `from` date. Its `preMarket` and `afterHours` prices are not session high/low
+ranges; this starter derives extended-session OHLC from the intraday observations.
+Access and available history depend on your provider account. Keep acquisition code
+and credentials under your own control, then supply the CSVs described below.
+
+Record provenance with `--source "Massive historical CSV export"` and an accurate
+`--price-basis`. These flags label the supplied data; they do not fetch it. A future
+Schwab exporter can target the same CSV contract. The `analyze --adapter` hook below
+is for model authoring and does not provide a market-data connection.
+
 ## Use your data
 
 Export one-minute or 30-minute bars to CSV. Timestamps are **bar starts** with an explicit
