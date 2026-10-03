@@ -1,14 +1,37 @@
 # level-charting
 
-A small Python starter for drawing evidence-backed price-area maps. A human or language
-model interprets the chart and selects areas; code prepares the data, verifies numerical
-claims and renders full/recent charts with shaded zones and inline labels.
+A small Python starter for drawing evidence-backed price-area maps, developed through
+human-reviewed charting experiments. A human or language model interprets the chart and
+selects areas; code prepares the data, verifies numerical claims and renders full/recent
+charts with shaded zones and inline labels.
 
 The default is ten completed US equity sessions, 30-minute candles, extended hours and
 an explicit evening cutoff. Selection is contextual: coherent body boundaries, wick
 rejections, role changes and meaningful extremes. There is no fixed line quota, touch
 threshold or automatic strength score. The executable [method prompt](src/level_charting/method.md)
 contains the complete selection and presentation instructions.
+
+## What you bring
+
+To make a map with real market data, supply:
+
+- **Your own data source:** one-minute or 30-minute OHLCV candles as CSV, with
+  timezone-aware bar-start timestamps. The default window is ten completed US equity
+  sessions, including extended hours. Separately sourced daily OHLC is optional.
+- **Your own analyst or model:** you, a coding agent with image-inspection capabilities,
+  or a model that can inspect the chart images and exact records. Follow the included
+  methodology to select areas and return a structured proposal using the supplied schema.
+
+**Your data → evidence packet → human/model interpretation → validation → rendered maps**
+
+No market-data subscription, provider connection or model API is bundled. You can supply
+an analyst-authored proposal directly, or implement a Python adapter to automate your
+chosen model. The repository handles packet preparation, validation and rendering.
+
+Start with the credential-free demo below, then follow [Use your data](#use-your-data)
+to create a real map. Customize the data exporter, model integration, method prompt and presentation
+for your needs. Maps are planning references for human review; this repository does not
+execute trades.
 
 ## Try it
 
@@ -23,7 +46,8 @@ uv run level-charting demo --out output/demo
 
 Open `output/demo/charts/map.png` and `recent-map.png`. The demo generates fictional
 prices, an example proposal and the full evidence packet locally. It needs no account,
-API key or model call. Its fixture selections are for demonstrating the contracts.
+API key or model call. Its predefined area selections demonstrate the pipeline using
+fictional observations.
 
 ## Data sources
 
